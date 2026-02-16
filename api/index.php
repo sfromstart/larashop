@@ -23,11 +23,15 @@ foreach ([
     }
 }
 
-// Copy SQLite database to /tmp on cold start
+// Copy SQLite database to /tmp (re-copy when source changes between deploys)
 $dbSource = $basePath . '/database/database.sqlite';
 $dbTarget = '/tmp/database.sqlite';
-if (!file_exists($dbTarget) && file_exists($dbSource)) {
+$dbVersionFile = '/tmp/.db_version';
+$currentVersion = md5_file($dbSource);
+$cachedVersion = file_exists($dbVersionFile) ? file_get_contents($dbVersionFile) : '';
+if ($currentVersion !== $cachedVersion && file_exists($dbSource)) {
     copy($dbSource, $dbTarget);
+    file_put_contents($dbVersionFile, $currentVersion);
 }
 
 // Force HTTPS for Vercel reverse proxy
