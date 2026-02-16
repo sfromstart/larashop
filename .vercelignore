@@ -19,3 +19,5 @@ storage/framework/views
 Homestead.json
 Homestead.yaml
 deploy.sh
+bootstrap/cache/packages.php
+bootstrap/cache/services.php
