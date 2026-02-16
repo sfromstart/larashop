@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
     {
         // 프로덕션이 아닌 환경에서 Lazy Loading 방지
         Model::preventLazyLoading(!app()->isProduction());
+
+        // 프로덕션 환경에서 HTTPS 강제
+        if (app()->isProduction()) {
+            URL::forceScheme('https');
+        }
 
         // 카테고리 메뉴 캐싱
         View::composer('layouts.shop', function ($view) {

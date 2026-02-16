@@ -5,10 +5,6 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-// Error reporting for debugging
-ini_set('display_errors', '1');
-error_reporting(E_ALL);
-
 $basePath = dirname(__DIR__);
 
 // Create writable directories in /tmp (serverless read-only filesystem)
@@ -34,28 +30,18 @@ if (!file_exists($dbTarget) && file_exists($dbSource)) {
     copy($dbSource, $dbTarget);
 }
 
+// Force HTTPS for Vercel reverse proxy
+$_SERVER['HTTPS'] = 'on';
+$_SERVER['SERVER_PORT'] = 443;
+
 // Register the Composer autoloader
 require $basePath . '/vendor/autoload.php';
 
-try {
-    // Bootstrap Laravel
-    /** @var Application $app */
-    $app = require_once $basePath . '/bootstrap/app.php';
-    $app->useStoragePath($storagePath);
-    $app->useBootstrapPath('/tmp/bootstrap');
+// Bootstrap Laravel
+/** @var Application $app */
+$app = require_once $basePath . '/bootstrap/app.php';
+$app->useStoragePath($storagePath);
+$app->useBootstrapPath('/tmp/bootstrap');
 
-    // Handle the request
-    $app->handleRequest(Request::capture());
-} catch (\Throwable $e) {
-    http_response_code(500);
-    header('Content-Type: text/plain');
-    echo "Error: " . $e->getMessage() . "\n";
-    echo "File: " . $e->getFile() . ":" . $e->getLine() . "\n";
-    echo "Trace:\n" . $e->getTraceAsString() . "\n";
-
-    // Check for previous exception
-    if ($prev = $e->getPrevious()) {
-        echo "\nPrevious: " . $prev->getMessage() . "\n";
-        echo "File: " . $prev->getFile() . ":" . $prev->getLine() . "\n";
-    }
-}
+// Handle the request
+$app->handleRequest(Request::capture());
