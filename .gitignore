@@ -12,6 +12,8 @@
 /.vscode
 /.zed
 /auth.json
+/bootstrap/cache/packages.php
+/bootstrap/cache/services.php
 /node_modules
 # /public/build  (Vercel 배포를 위해 포함)
 /public/hot
