@@ -13,7 +13,7 @@
 /.zed
 /auth.json
 /node_modules
-/public/build
+# /public/build  (Vercel 배포를 위해 포함)
 /public/hot
 /public/storage
 /storage/*.key
@@ -22,5 +22,5 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
-/database/*.sqlite
+# /database/*.sqlite  (Vercel 배포를 위해 포함)
 /database/*.sqlite-journal
