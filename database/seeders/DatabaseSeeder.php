@@ -84,10 +84,60 @@ class DatabaseSeeder extends Seeder
         }
 
         // ── 4. Products (50) with images, 30% with options ──
+        // 상품명 → 카테고리 매핑 (올바른 분류)
+        $productCategoryMap = [
+            '프리미엄 코튼 티셔츠' => '티셔츠',
+            '슬림핏 청바지' => '바지',
+            '가죽 크로스백' => '크로스백',
+            '무선 블루투스 이어폰' => '이어폰',
+            '스테인리스 텀블러' => '주방',
+            '오가닉 그래놀라' => '건강식품',
+            '히알루론산 세럼' => '스킨케어',
+            '러닝화 에어맥스' => '운동화',
+            '캐시미어 머플러' => '아우터',
+            '스마트 체중계' => '러닝',
+            '접이식 우산' => '욕실',
+            '원목 책상' => '주방',
+            '에어프라이어' => '주방',
+            '캔버스 스니커즈' => '운동화',
+            '실크 파자마 세트' => '아우터',
+            '휴대용 보조배터리' => '충전기',
+            '유기농 꿀' => '건강식품',
+            '향수 오드뚜왈렛' => '향수',
+            '요가 매트' => '요가',
+            '노트북 파우치' => '백팩',
+            '스테인리스 프라이팬' => '주방',
+            'LED 무드등' => '욕실',
+            '면 양말 세트' => '티셔츠',
+            '비타민C 영양제' => '건강식품',
+            '천연 핸드크림' => '스킨케어',
+            '미니 가습기' => '욕실',
+            '데일리 백팩' => '백팩',
+            '드라이 플라워 세트' => '욕실',
+            '볼캡 모자' => '아우터',
+            '핸드메이드 비누' => '욕실',
+            '미니 블루투스 스피커' => '스피커',
+            '오버사이즈 후드티' => '티셔츠',
+            '골든 목걸이' => '크로스백',
+            '접이식 테이블' => '주방',
+            '아로마 디퓨저' => '욕실',
+            '레더 지갑' => '크로스백',
+            '스포츠 선글라스' => '러닝',
+            '세라믹 머그컵' => '주방',
+            '초경량 캐리어' => '백팩',
+            '전기 면도기' => '욕실',
+        ];
+        $categoryNameToId = Category::pluck('id', 'name')->toArray();
+
         $products = Product::factory(50)
-            ->sequence(fn ($sequence) => [
-                'category_id' => $allChildCategories->random()->id,
-            ])
+            ->sequence(function ($sequence) use ($productCategoryMap, $categoryNameToId, $allChildCategories) {
+                $names = array_keys($productCategoryMap);
+                $name = $names[$sequence->index % count($names)];
+                $catName = $productCategoryMap[$name];
+                return [
+                    'category_id' => $categoryNameToId[$catName] ?? $allChildCategories->random()->id,
+                ];
+            })
             ->create();
 
         foreach ($products as $product) {
